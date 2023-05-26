@@ -1,0 +1,56 @@
+def draw_strokes_yolo_words(stroke_list, x_to_y=1, line_width=None, save_path=""):
+    def prep_figure(figsize=(5,1), dpi=71):
+        f = plt.figure()#figsize=figsize, dpi = dpi)
+        plt.axis('off')
+        #plt.axis('square')
+        return f
+
+    # plt.NullFormatter()
+
+    if line_width is None:
+        line_width = int(max(random.gauss(2, 2), 1))
+    if x_to_y != 1 and not x_to_y is None:
+        for stroke in stroke_list:
+            stroke["x"] = [item * x_to_y for item in stroke["x"]]
+
+    # Add tiny amount of padding
+    y_min = min([min(x["y"]) for x in stroke_list])
+    y_max = max([max(x["y"]) for x in stroke_list])
+    x_min = min([min(x["x"]) for x in stroke_list])
+    x_max = max([max(x["x"]) for x in stroke_list])
+
+    if x_to_y:
+        size = (ceil(x_to_y),1)
+    else:
+        size = (ceil((x_max-x_min)/(y_max-y_min)), 1)
+    baseSize  = 400
+    size = (ceil((x_max - x_min) / (y_max - y_min)), 1)
+    NewMax = ceil((x_max - x_min) / (y_max - y_min)) * baseSize
+    size = (NewMax, baseSize)
+    #if save_path:
+
+        #prep_figure(figsize=size) #pad_dpi["dpi"])
+
+    #plt.ylim([y_min, y_max])
+    #plt.xlim([x_min, x_max])
+
+    image = np.zeros([baseSize, NewMax, 3], dtype=np.uint8)
+    image.fill(255)
+
+    bboxes_strokes_x, bboxes_strokes_y  = [], []
+    for stroke in stroke_list:
+
+
+        stroke["x"]= ((((np.asarray(stroke["x"]) - x_min) * (NewMax - 0)) / (x_max - x_min)) + 0).tolist()
+        stroke["y"] = ((((np.asarray(stroke["y"]) - y_min) * (ceil(baseSize) - 0)) / (y_max - y_min)) + 0).tolist()
+
+        bboxes_strokes_x.append([min(stroke["x"]), max(stroke["x"])])
+        bboxes_strokes_y.append([min(stroke["y"]), max(stroke["y"])])
+        #plt.plot(stroke["x"], stroke["y"], linewidth=line_width, color="black")
+        #a1 = np.array([(375, 193), (364, 113), (277, 20), (271, 16), (52, 106), (133, 266), (289, 296), (372, 282)])
+        a = np.asarray(list(zip(stroke["x"], stroke["y"]))).astype(int)
+        for point1, point2 in zip(a, a[1:]):
+            cv2.line(image, point1, point2, [0, 0, 0], line_width)
+    image = cv2.flip(image, 0)
+
+    cv2.imwrite(save_path, image)

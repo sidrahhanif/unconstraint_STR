@@ -1,0 +1,40 @@
+The instructions to execute the code are as follows:
+$HOME is a directory where the code you place the folder “Word_detection_STR_product”
+## Aanaconda
+After logging in, install Anaconda 3:
+
+``` sh
+cd /tmp
+curl -O https://repo.anaconda.com/archive/Anaconda3-2019.03-Linux-x86_64.sh
+bash Anaconda3-5.2.0-Linux-x86_64.sh
+```
+
+## Environment
+
+Create the environment defined in `environment.yaml`.
+```
+conda env create -f environment.yaml --name hwr
+cd word_detection
+pip install -r requirements.txt
+conda activate hwr
+```
+
+## Execution
+
+### Sample images
+The sample images are placed in the folder:
+$HOME./Word_detection_STR_product/word_detection/test_STR_images/images/. The results for these sample placed at the home path with suffix “results_” image name. For example, the results for image “d04-257” are saved in image file “results_d04-257.jpg”
+
+
+## Trajectory Recovery
+[Recommended] Run the file “execute.sh”, it will produce all the results.
+Step-by-step guide to run code:
+1)	Place the handwriting text image in folder $HOME./Word_detection_STR_product/word_detection/test_STR_images/images/
+
+2)	cd ./word_detection/
+
+3)	Execute the command python /$HOME /Word_detection_STR_product/word_detection/yolov5_test_STR_Signed.py --source $HOME/Word_detection_STR_product/word_detection/test_STR_images/images/
+	This will save word into directory word_detection/runs/detect/exp/
+4)	Execute command python stroke_recovery_offline.py
+5)	Change the image-name in file merge_words_full_page.py to visualize the results.
+By default , it is ‘d04-257.
